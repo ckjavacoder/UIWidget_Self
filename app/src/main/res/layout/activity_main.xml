@@ -5,12 +5,38 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp" />
+        android:layout_height="45dp"
+        android:background="#D94389">
+
+    </FrameLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp" android:background="#999999"/>
 
     <com.youloft.widget.WeekView
         android:layout_width="match_parent"
         android:layout_height="60dp" />
+
+    <com.youloft.widget.WeekView
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
+    <com.youloft.widget.WeekView
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
+    <com.youloft.widget.WeekView
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
+    <com.youloft.widget.WeekView
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+    <com.youloft.widget.WeekView
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
 
 </LinearLayout>

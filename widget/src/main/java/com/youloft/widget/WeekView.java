@@ -31,116 +31,79 @@ import java.util.Calendar;
  * Created by javen on 15/6/8.
  */
 public class WeekView extends View implements GestureDetector.OnGestureListener {
-    int drawLeft = 0;
 
-    int itemWidth = 0;
-
-    TextPaint mPaint = null;
-
+    BaseDayView childs[] = new BaseDayView[7];
 
     GestureDetectorCompat mGesture;
 
-    Paint mLinePaint = null;
+    DrawParams mDrawParams;
+
+    int itemWidth;
+
+    int itemHeight;
+
+    int spaceH;
 
     public WeekView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(3);
-        mPaint.setColor(Color.RED);
-
-        mLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mLinePaint.setStyle(Paint.Style.FILL);
-        mLinePaint.setStrokeWidth(3);
-        mLinePaint.setColor(Color.GRAY);
-
         mGesture = new GestureDetectorCompat(context, this);
+        mDrawParams = new DrawParams(context, attrs);
+        populateLayout();
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        drawLeft = w % 7 / 2;
-        itemWidth = w / 7;
-
-    }
-
-
-    /**
-     * 更新某一项
-     *
-     * @param pos
-     */
-    public void updatePosition(int pos) {
-        if (mBufferCanvas != null) {
-            Rect rect = getRectByPoint(new Point(pos, 0));
-            mBufferCanvas.save();
-            mBufferCanvas.clipRect(rect, Region.Op.REPLACE);
-            mBufferCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            drawDay(mBufferCanvas, rect, pos, true);
-            mBufferCanvas.restore();
+        if (w != oldw && w > 0) {
+            itemWidth = w / 7;
+            itemHeight = h;
+            spaceH = w % 7;
         }
     }
 
-    private Rect mRect = new Rect();
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        for (int j = 0; j < childs.length; j++) {
+            setChildFrame(childs[j], j);
+        }
+    }
 
-    private Bitmap mBufferBitmap = null;
+    /**
+     * 设置日视图的Frame
+     *
+     * @param child
+     * @param i
+     */
+    private void setChildFrame(BaseDayView child, int i) {
+        int left = i * itemWidth + (spaceH > 0 ? spaceH / 2 : spaceH);
+        int top = 0;
+        child.setBounds(left, top, left + itemWidth, top + itemHeight);
+    }
 
-    private Canvas mBufferCanvas = null;
+    /**
+     *
+     */
+    public void populateLayout() {
+        for (int j = 0; j < childs.length; j++) {
+            BaseDayView child = childs[j];
+            if (child == null) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE,j);
+                child = new SimpleDayView(mDrawParams,calendar);
+                childs[j] = child;
+            }
+        }
+    }
 
-    int preSelect = 0;
 
     @Override
     protected void onDraw(Canvas canvas) {
-
-
-        long begin = System.currentTimeMillis();
-
-        if (mSelectPoint.x > 0) {
-            final Rect rect = getRectByPoint(mSelectPoint);
-            mPaint.setStyle(Paint.Style.FILL);
-            mPaint.setColor(Color.RED);
-            canvas.drawRect(rect, mPaint);
+        for (int i = 0; i < childs.length; i++) {
+            childs[i].draw(canvas);
         }
 
-        if (mBufferCanvas == null) {
-
-            mBufferBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-            mBufferCanvas = new Canvas(mBufferBitmap);
-            mBufferCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-
-            for (int i = 0; i < 42; i++) {
-                mRect.set(drawLeft + itemWidth * i + 1, 0, drawLeft + itemWidth * i + itemWidth - 1, getHeight());
-                if (i == mSelectPoint.x) {
-                    drawDay(mBufferCanvas, mRect, i, true);
-                } else {
-                    drawDay(mBufferCanvas, mRect, i, false);
-                }
-                mPaint.setStyle(Paint.Style.STROKE);
-            }
-        }
-        if (mSelectPoint.x > 0 && mSelectPoint.x != preSelect) {
-            updatePosition(mSelectPoint.x);
-            updatePosition(preSelect);
-
-        }
-        canvas.drawBitmap(mBufferBitmap, 0, 0, null);
-        if (mSelectPoint.x > 0) {
-            final Rect rect = getRectByPoint(mSelectPoint);
-            mPaint.setStyle(Paint.Style.STROKE);
-            mPaint.setColor(Color.GRAY);
-            canvas.drawRect(rect, mPaint);
-        }
-        preSelect = mSelectPoint.x;
-        long end = System.currentTimeMillis();
-        System.out.println("cost time:" + (end - begin));
     }
-
-    private Rect getRectByPoint(Point mSelectPoint) {
-        return new Rect(mSelectPoint.x * itemWidth, mSelectPoint.y * getHeight(), mSelectPoint.x * itemWidth + itemWidth, mSelectPoint.y * getHeight() + getHeight());
-    }
-
-    int i = 0;
 
 
     /**
@@ -148,6 +111,7 @@ public class WeekView extends View implements GestureDetector.OnGestureListener 
      */
     static class SimpleDayView extends BaseDayView {
 
+        private static final boolean DEBUG = false;
         private TextPaint mPaint;
 
         private Calendar mDate = Calendar.getInstance();
@@ -160,6 +124,8 @@ public class WeekView extends View implements GestureDetector.OnGestureListener 
         public SimpleDayView(DrawParams params, Calendar date) {
             this(params);
             this.mDate.setTimeInMillis(date.getTimeInMillis());
+            dateTxt = mDate.get(Calendar.DAY_OF_MONTH) + "";
+            lunarTxt = "三月";
         }
 
 
@@ -169,62 +135,92 @@ public class WeekView extends View implements GestureDetector.OnGestureListener 
         @Override
         public void draw(Canvas canvas) {
 
+            if (DEBUG) {
+                mParams.DebugPaint.setColor(Color.RED);
+                mParams.DebugPaint.setStyle(Paint.Style.STROKE);
+                canvas.drawRect(mRect, mParams.DebugPaint);
+            }
 
-//            canvas.save();
-//            canvas.clipRect(mRect, Region.Op.REPLACE);
-//            canvas.drawColor(Color.TRANSPARENT);
-//
-//            canvas.restore();
-//
-//            mPaint.setTextSize(mRect.width() / 2.5f);
-//            mPaint.setColor(isSelected ? Color.WHITE : 0xFF111111);
-//            mPaint.setStyle(Paint.Style.FILL);
-//            StaticLayout layout = new StaticLayout(dateTxt, mPaint, mRect.width(), Layout.Alignment.ALIGN_CENTER, 1f, 0f, false);
-//
-//
-//            float w = layout.getLineWidth(0);
-//            float left = mRect.centerX() + w / 2;
-//            float width = Math.min(dp2px(12), mRect.right - left);
-//
-//            Rect mRect1 = new Rect((int) left, mRect.top, (int) (left + width), (int) (mRect.top + width));
-//            Drawable dw = mParams.getHolidayDrawable(1);
-//            dw.setBounds(mRect1);
-//            dw.draw(canvas);
-//            canvas.save();
-//            canvas.translate(mRect.left, mRect.top);
-//            layout.draw(canvas);
-//            canvas.restore();
-//
-//
-//            mPaint.setColor(0xFFD93448);
-//            mPaint.setTextSize(mRect.width() / 4);
-//            String text = lunarTxt;
-//
-//            StaticLayout layout1 = new StaticLayout(text, mPaint, mRect.width(), Layout.Alignment.ALIGN_CENTER, 1f, 0f, false);
-//            int top = mRect.top + layout.getHeight();
-//            canvas.save();
-//            canvas.translate(mRect.left, top);
-//            layout1.draw(canvas);
-//            canvas.restore();
-//
-//            int top1 = top + layout1.getHeight() / layout1.getLineCount();
-//            mPaint.setStyle(Paint.Style.FILL);
-//            mPaint.setStrokeWidth(1);
-//            mPaint.setColor(0xFF999999);
-//            if (getWidth() > 480) {
-//                top1 += dp2px(4);
-//            }
-//            canvas.drawCircle(mRect.centerX(), top1 + dp2px(2), dp2px(2), mPaint);
-//            mRect.offset(0, -15);
-//            mPaint.setStyle(Paint.Style.FILL);
-//            mPaint.setColor(Color.BLUE);
-//            canvas.drawRoundRect(new RectF(mRect.left + dp2px(3), mRect.bottom - dp2px(2), mRect.right - dp2px(3), mRect.bottom - dp2px(1)), dp2px(1), dp2px(1), mPaint);
+            Rect r = new Rect( mRect);
+            r.inset(2,2);
+            canvas.drawRect(r,mParams.DebugPaint);
+
+            canvas.save();
+            canvas.clipRect(mRect);
+            canvas.translate(mRect.left, mRect.top+mParams.dp2px(5));
+            canvas.drawColor(0x7F999999);
+
+            mParams.initDatePaint(mPaint);
+            StaticLayout dateTxtLayout = new StaticLayout(dateTxt, mPaint, getWidth(), Layout.Alignment.ALIGN_CENTER, 1f, 0f, false);
+            dateTxtLayout.draw(canvas);
+
+            final Drawable holidayDrawable = mParams.getHolidayDrawable(1);
+            if(holidayDrawable!=null){
+                int right = mRect.width();
+                holidayDrawable.setBounds((int)(right-mParams.dp2px(13)),0,(int)(right-mParams.dp2px(2)),(int)mParams.dp2px(11));
+                holidayDrawable.draw(canvas);
+            }
+
+            if(DEBUG){
+                mParams.DebugPaint.setColor(Color.GREEN);
+                canvas.drawLine(0,0,getWidth(),0,mParams.DebugPaint);
+                float left = mRect.width()/2+dateTxtLayout.getLineWidth(0)/2;
+                canvas.drawLine(left,0,left,getHeight(),mParams.DebugPaint);
+                canvas.drawLine(left+mParams.dp2px(12),0,left+mParams.dp2px(12),getHeight(),mParams.DebugPaint);
+                canvas.drawLine(0,mParams.dp2px(12),getWidth(),mParams.dp2px(12),mParams.DebugPaint);
+                mParams.DebugPaint.setColor(Color.RED);
+            }
+
+
+
+            //draw debug
+            if (DEBUG)
+                canvas.drawLine(0, dateTxtLayout.getHeight(), getWidth(), dateTxtLayout.getHeight(), mParams.DebugPaint);
+
+            mParams.initLunarPaint(mPaint);
+            StaticLayout lunarTextLayout = new StaticLayout(lunarTxt, mPaint, getWidth(), Layout.Alignment.ALIGN_CENTER, 1f, 0f, false);
+
+
+            //move canvas draw
+            canvas.translate(0, dateTxtLayout.getHeight());
+            lunarTextLayout.draw(canvas);
+            //draw debug
+            if (DEBUG)
+                canvas.drawLine(0, lunarTextLayout.getHeight(), getWidth(), lunarTextLayout.getHeight(), mParams.DebugPaint);
+
+            canvas.translate(0,lunarTextLayout.getHeight()+mParams.getEventMargin());
+
+            //draw debug
+            if (DEBUG){
+                mParams.DebugPaint.setColor(Color.BLUE);
+                canvas.drawLine(0, 0, getWidth(), 0, mParams.DebugPaint);
+            }
+
+            //draw event
+//            canvas.drawPoint(mRect.centerX(),0,mPaint);
+            canvas.drawCircle(mRect.width()/2,mParams.dp2px(2),mParams.dp2px(2),mPaint);
+
+
+            canvas.translate(0,mParams.dp2px(8));
+            //draw debug
+            if (DEBUG){
+                mParams.DebugPaint.setColor(Color.BLACK);
+                canvas.drawLine(0, 0, getWidth(), 0, mParams.DebugPaint);
+            }
+
+            canvas.drawRoundRect(new RectF(mParams.dp2px(5),0,getWidth()-mParams.dp2px(5),mParams.dp2px(2)),mParams.dp2px(1),mParams.dp2px(1),mPaint);
+
+            canvas.restore();
 
 
         }
 
         public int getWidth() {
-            return mParams.width;
+            return mRect.width();
+        }
+
+        public  int getHeight(){
+            return mRect.height();
         }
 
         @Override
@@ -243,63 +239,6 @@ public class WeekView extends View implements GestureDetector.OnGestureListener 
         }
     }
 
-    /**
-     * 在Rect区域中绘制天
-     * 13
-     * <p/>
-     * 39x39
-     *
-     * @param canvas
-     * @param mRect
-     * @param isSelected
-     */
-    private void drawDay(Canvas canvas, Rect mRect, int index, boolean isSelected) {
-
-        canvas.save();
-        canvas.clipRect(mRect);
-        mPaint.setTextSize(30);
-        canvas.translate(mRect.left, mRect.top);
-        canvas.drawText("F", mRect.width() / 2, mRect.height() / 2, mPaint);
-        canvas.restore();
-
-    }
-
-    private void drawLine(Canvas canvas, int y, int green) {
-        if (!DEBUG) return;
-
-        mLinePaint.setColor(green);
-        canvas.drawLine(0, y, getWidth(), y, mLinePaint);
-    }
-
-    boolean DEBUG = false;
-
-    private void drawLinX(Canvas canvas, int x, int red) {
-        if (!DEBUG) return;
-        mLinePaint.setColor(red);
-        canvas.drawLine(x, 0, x, getHeight(), mLinePaint);
-    }
-
-    private void drawLine1(Canvas canvas, float y) {
-        if (!DEBUG) return;
-
-        mLinePaint.setColor(Color.BLUE);
-        canvas.drawLine(0, y, getWidth(), y, mLinePaint);
-    }
-
-    private void drawLine(Canvas canvas, float y) {
-        if (!DEBUG) return;
-
-        mLinePaint.setColor(Color.GRAY);
-        canvas.drawLine(0, y, getWidth(), y, mLinePaint);
-    }
-
-    private void drawLinX(Canvas canvas, float x) {
-        if (!DEBUG) return;
-        mLinePaint.setColor(Color.GREEN);
-        canvas.drawLine(x, 0, x, getHeight(), mLinePaint);
-    }
-
-    Point mSelectPoint = new Point(0, 0);
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -319,7 +258,7 @@ public class WeekView extends View implements GestureDetector.OnGestureListener 
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
         Point sPoint = findPointIn(e.getX(), e.getY());
-        mSelectPoint.set(sPoint.x, sPoint.y);
+//        mSelectPoint.set(sPoint.x, sPoint.y);
         ViewCompat.postInvalidateOnAnimation(this);
         return true;
 
@@ -333,10 +272,7 @@ public class WeekView extends View implements GestureDetector.OnGestureListener 
      * @return
      */
     private Point findPointIn(float x, float y) {
-        int xpos = (int) (x / itemWidth);
-        int ypos = (int) (y / getHeight());
-
-        return new Point(xpos, ypos);
+        return null;
     }
 
     @Override

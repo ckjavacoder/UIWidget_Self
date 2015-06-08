@@ -20,11 +20,16 @@ public abstract class BaseDayView extends Drawable {
     }
 
 
-    Rect mRect = null;
+    Rect mRect = new Rect();
 
 
     public void setBounds(Rect rect) {
-        this.mRect = rect;
+
+        this.mRect.set(rect);
     }
 
+    @Override
+    public void setBounds(int left, int top, int right, int bottom) {
+        this.mRect.set(left,top,right,bottom);
+    }
 }
