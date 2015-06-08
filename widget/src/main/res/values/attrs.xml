@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="DayStyle">
+        <attr name="height" />
+        <attr name="holiday" format="reference" />
+        <attr name="event" format="reference" />
+        <attr name="lady" format="reference" />
+        <attr name="textColor" format="color|reference" />
+    </declare-styleable>
+
+</resources>
