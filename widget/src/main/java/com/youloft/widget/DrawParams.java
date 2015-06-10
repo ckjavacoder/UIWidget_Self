@@ -21,9 +21,8 @@ import android.util.TypedValue;
  */
 public class DrawParams {
 
-    float mHeight;
+    int mLineHeight;
 
-    int width;
 
     Drawable mHolidayDrawable;
 
@@ -36,6 +35,15 @@ public class DrawParams {
     TextPaint mLunarPaint;
 
     TextPaint mFestivalPaint;
+
+    int mDayTextSize;
+
+    int mLunarTextSize;
+
+    int mFetivalTextSize;
+
+    int mTermTextSize;
+
     public Paint DebugPaint;
 
     private Resources mRes;
@@ -47,6 +55,13 @@ public class DrawParams {
         DebugPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         DebugPaint.setStyle(Paint.Style.STROKE);
         DebugPaint.setColor(Color.RED);
+
+
+        mLineHeight = (int) dp2px(52);
+        mDayTextSize = (int) dp2px(21);
+        mLunarTextSize = (int) dp2px(10);
+        mFetivalTextSize = mLunarTextSize;
+        mTermTextSize = mLunarTextSize;
     }
 
 
@@ -64,7 +79,11 @@ public class DrawParams {
         mLadyDrawable = ta.getDrawable(R.styleable.DayStyle_lady);
         mEventDrawable = ta.getDrawable(R.styleable.DayStyle_event);
         mTextColor = ta.getColorStateList(R.styleable.DayStyle_textColor);
-        mHeight = ta.getDimension(R.styleable.DayStyle_height, 50);
+        mLineHeight = ta.getDimensionPixelOffset(R.styleable.DayStyle_lineHeight, mLineHeight);
+        mDayTextSize = ta.getDimensionPixelSize(R.styleable.DayStyle_dayTextSize, mDayTextSize);
+        mLunarTextSize = ta.getDimensionPixelSize(R.styleable.DayStyle_lunarTextSize, mLunarTextSize);
+        mFetivalTextSize = ta.getDimensionPixelSize(R.styleable.DayStyle_festTextSize, mLunarTextSize);
+        mTermTextSize = ta.getDimensionPixelSize(R.styleable.DayStyle_termTextSize, mLunarTextSize);
         ta.recycle();
     }
 
@@ -88,7 +107,7 @@ public class DrawParams {
      * @return
      */
     public float getDateTextSize() {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, mRes.getDisplayMetrics());
+        return mDayTextSize;
     }
 
     /**
@@ -108,8 +127,10 @@ public class DrawParams {
     }
 
     private float getLunarTextSize() {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, mRes.getDisplayMetrics());
+        return mLunarTextSize;
     }
+
+
 
     public float getEventMargin() {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, mRes.getDisplayMetrics());
@@ -117,5 +138,14 @@ public class DrawParams {
 
     public float dp2px(int i) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, i, mRes.getDisplayMetrics());
+    }
+
+    /**
+     * 获取行高
+     *
+     * @return
+     */
+    public int getLineHeight() {
+        return mLineHeight;
     }
 }

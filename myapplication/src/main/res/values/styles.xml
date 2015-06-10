@@ -5,4 +5,11 @@
         <!-- Customize your theme here. -->
     </style>
 
+
+    <style name="MonthStyle">
+        <item name="lineHeight">60dp</item>
+        <item name="dayTextSize">26dp</item>
+        <item name="lunarTextSize">12dp</item>
+    </style>
+
 </resources>

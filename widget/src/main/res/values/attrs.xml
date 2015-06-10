@@ -2,11 +2,15 @@
 <resources>
 
     <declare-styleable name="DayStyle">
-        <attr name="height" />
+        <attr name="lineHeight" format="reference|dimension" />
         <attr name="holiday" format="reference" />
         <attr name="event" format="reference" />
         <attr name="lady" format="reference" />
         <attr name="textColor" format="color|reference" />
+        <attr name="dayTextSize" format="reference|dimension"/>
+        <attr name="lunarTextSize" format="reference|dimension"/>
+        <attr name="festTextSize" format="reference|dimension"/>
+        <attr name="termTextSize" format="reference|dimension"/>
     </declare-styleable>
 
 </resources>

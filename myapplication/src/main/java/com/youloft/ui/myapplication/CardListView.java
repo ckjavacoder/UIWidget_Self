@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 /**
@@ -16,10 +17,70 @@ import android.view.View;
  */
 public class CardListView extends RecyclerView {
 
+    private boolean mFlingEnabled = true;
+
+
+    /**
+     * 设置是否可以Fling
+     *
+     * @param enable
+     */
+    public void setFlingEnable(boolean enable) {
+        this.mFlingEnabled = enable;
+    }
+
     public CardListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         setDivider();
+        setScrollingTouchSlop(0);
+    }
+
+    boolean needIntercept = false;
+
+    float dx, dy, lx, ly;
+
+    @Override
+    public void smoothScrollBy(int dx, int dy) {
+        super.smoothScrollBy(dx, dy);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent e) {
+
+        if(computeVerticalScrollOffset()>0){
+            return false;
+        }
+
+
+        final int action = e.getAction();
+        if(needIntercept&& action!=MotionEvent.ACTION_DOWN){
+            return needIntercept;
+        }
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                lx = dx = e.getX();
+                ly = dy = e.getY();
+                needIntercept = false;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float ddx = e.getX();
+                float ddy = e.getY();
+
+                float diffX = ddx-lx;
+                float diffy = ddy - ly;
+                lx = ddx;
+                ly = ddy;
+                if(Math.abs(diffX)<Math.abs(diffy)&& Math.abs(diffy)>20){
+                    needIntercept = true;
+                }
+                break;
+        }
+
+        super.onInterceptTouchEvent(e);
+        return needIntercept;
+
+
     }
 
     /**
@@ -32,7 +93,6 @@ public class CardListView extends RecyclerView {
 //                c.drawColor(Color.WHITE);
             }
 
-
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state) {
                 if (view.getVisibility() == View.VISIBLE)
@@ -42,6 +102,15 @@ public class CardListView extends RecyclerView {
             }
         });
     }
+
+    @Override
+    public boolean fling(int velocityX, int velocityY) {
+        if (!mFlingEnabled) {
+            return false;
+        }
+        return super.fling(velocityX, velocityY);
+    }
+
 
     /**
      * 获取第一个显示的位置

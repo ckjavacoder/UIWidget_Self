@@ -1,5 +1,6 @@
 package com.youloft.widget;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -70,7 +71,16 @@ public abstract class BaseCalendarView extends View implements GestureDetector.O
         setClickable(true);
         mGesture = new GestureDetectorCompat(context, this);
         mDrawParams = new DrawParams(context, attrs);
+        itemHeight = mDrawParams.getLineHeight();
         initLayout();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (getLayoutParams().height < 0) {
+            setMeasuredDimension(getMeasuredWidth(), itemHeight * (getCount() / 7));
+        }
     }
 
     boolean useCache = true;
@@ -87,7 +97,7 @@ public abstract class BaseCalendarView extends View implements GestureDetector.O
 
     protected void initLayout() {
         if (childs == null)
-            childs = new SimpleDayView[42];
+            childs = new SimpleDayView[getCount()];
         for (int j = 0; j < childs.length; j++) {
             BaseDayView child = childs[j];
             if (child == null) {
@@ -384,14 +394,31 @@ public abstract class BaseCalendarView extends View implements GestureDetector.O
     public boolean onTouchEvent(MotionEvent event) {
         if (isClickable()) {
             mGesture.onTouchEvent(event);
+
+            if(event.getAction() == MotionEvent.ACTION_UP){
+
+//                if(event.getX()-downX>getWidth()/4){
+////                    this.animate().x(getWidth()).setDuration(300).start();
+//                }else{
+////                    this.animate().x(-getWidth()).setDuration(300).start();
+//                }
+            }
             return true;
+
+
         }
+
+
         return super.onTouchEvent(event);
     }
 
+    float downX = -1;
     @Override
     public boolean onDown(MotionEvent e) {
+
+        downX = e.getX();
         return true;
+
     }
 
     @Override
@@ -419,7 +446,11 @@ public abstract class BaseCalendarView extends View implements GestureDetector.O
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
+
+        System.out.println("MonthView onScroll:"+distanceX+"  y:"+distanceY);
+
+        return true;
+
     }
 
     @Override

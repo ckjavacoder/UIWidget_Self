@@ -37,7 +37,6 @@ public class WeekView extends BaseCalendarView {
     @Override
     protected void onComputeSize(int w, int h) {
         itemWidth = w / 7;
-        itemHeight = h;
         spaceH = w % 7;
     }
 

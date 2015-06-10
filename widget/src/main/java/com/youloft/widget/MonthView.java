@@ -24,7 +24,7 @@ public class MonthView extends BaseCalendarView {
     @Override
     protected void initLayout() {
         super.initLayout();
-        if (getHeight() != getRealHeight()) {
+        if (getHeight() != getRealHeight() && getLayoutParams()!=null) {
             getLayoutParams().height = getRealHeight();
             requestLayout();
         }
@@ -60,7 +60,6 @@ public class MonthView extends BaseCalendarView {
     @Override
     protected void onComputeSize(int w, int h) {
         itemWidth = w / 7;
-        itemHeight = h / 6;
         spaceH = w % 7;
     }
 
