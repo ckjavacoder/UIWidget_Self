@@ -84,35 +84,38 @@ public class DrawParams {
 
     /**
      * 获取上面日视图的大小
+     *
      * @return
      */
     public float getDateTextSize() {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,20,mRes.getDisplayMetrics());
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, mRes.getDisplayMetrics());
     }
 
     /**
      * 填充画日期的画笔
+     *
      * @param mPaint
+     * @param isSelected
      */
-    public void initDatePaint(TextPaint mPaint) {
+    public void initDatePaint(TextPaint mPaint, boolean isSelected) {
         mPaint.setTextSize(getDateTextSize());
-        mPaint.setColor(0xFF111111);
+        mPaint.setColor(isSelected ? Color.WHITE : 0xFF111111);
     }
 
-    public void initLunarPaint(TextPaint mPaint) {
+    public void initLunarPaint(TextPaint mPaint, boolean isSelected) {
         mPaint.setTextSize(getLunarTextSize());
-        mPaint.setColor(0xFFB34A8F);
+        mPaint.setColor(isSelected ? Color.WHITE : 0xFFB34A8F);
     }
 
     private float getLunarTextSize() {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,10,mRes.getDisplayMetrics());
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, mRes.getDisplayMetrics());
     }
 
     public float getEventMargin() {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,5,mRes.getDisplayMetrics());
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, mRes.getDisplayMetrics());
     }
 
     public float dp2px(int i) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,i,mRes.getDisplayMetrics());
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, i, mRes.getDisplayMetrics());
     }
 }

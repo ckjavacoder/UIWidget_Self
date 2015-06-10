@@ -11,32 +11,71 @@
         android:background="#D94389">
 
     </FrameLayout>
+
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp" android:background="#999999"/>
+        android:layout_height="1dp"
+        android:background="#999999" />
 
-    <com.youloft.widget.WeekView
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="60dp" />
+        android:layout_height="match_parent">
 
-    <com.youloft.widget.WeekView
-        android:layout_width="match_parent"
-        android:layout_height="60dp" />
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <com.youloft.widget.WeekView
-        android:layout_width="match_parent"
-        android:layout_height="60dp" />
 
-    <com.youloft.widget.WeekView
-        android:layout_width="match_parent"
-        android:layout_height="60dp" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll">
 
-    <com.youloft.widget.WeekView
-        android:layout_width="match_parent"
-        android:layout_height="60dp" />
-    <com.youloft.widget.WeekView
-        android:layout_width="match_parent"
-        android:layout_height="60dp" />
+                <LinearLayout
+                    android:id="@+id/full"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:orientation="vertical"
+                    android:tag="full">
+
+
+                    <include layout="@layout/weekview" />
+
+                    <com.youloft.widget.MonthView
+                        android:layout_width="match_parent"
+                        android:layout_height="312dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:orientation="vertical">
+
+                    <include layout="@layout/weekview" />
+
+                    <com.youloft.widget.WeekView
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp" />
+                </LinearLayout>
+
+            </FrameLayout>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <view
+            android:id="@+id/listView"
+            class="com.youloft.ui.uiwidget.MainActivity$JRecyc"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="com.youloft.ui.uiwidget.MyBehind" />
+
+
+    </android.support.design.widget.CoordinatorLayout>
 
 
 </LinearLayout>
