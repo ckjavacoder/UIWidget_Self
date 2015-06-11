@@ -32,14 +32,6 @@ public class CardAdapter extends RecyclerView.Adapter<BaseCardView> {
 
     @Override
     public void onBindViewHolder(BaseCardView holder, int position) {
-        System.out.println("postion:" + position);
-//        if (position > 0 && position % 2 == 0) {
-//            holder.itemView.getLayoutParams().height = 0;
-//            holder.itemView.setVisibility(View.GONE);
-//        } else {
-//            holder.itemView.getLayoutParams().height = ActionBar.LayoutParams.WRAP_CONTENT;
-//        }
-
         holder.bindUI();
     }
 

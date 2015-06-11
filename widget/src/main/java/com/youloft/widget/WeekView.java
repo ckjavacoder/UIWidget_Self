@@ -16,7 +16,6 @@ public class WeekView extends BaseCalendarView {
 
     public WeekView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setClickable(true);
     }
 
     @Override

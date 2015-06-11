@@ -68,7 +68,6 @@ public abstract class BaseCalendarView extends View implements GestureDetector.O
 
     public BaseCalendarView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setClickable(true);
         mGesture = new GestureDetectorCompat(context, this);
         mDrawParams = new DrawParams(context, attrs);
         itemHeight = mDrawParams.getLineHeight();
@@ -390,29 +389,18 @@ public abstract class BaseCalendarView extends View implements GestureDetector.O
 
     protected abstract void onComputeSize(int w, int h);
 
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (isClickable()) {
+//        if (isClickable()) {
             mGesture.onTouchEvent(event);
-
-            if(event.getAction() == MotionEvent.ACTION_UP){
-
-//                if(event.getX()-downX>getWidth()/4){
-////                    this.animate().x(getWidth()).setDuration(300).start();
-//                }else{
-////                    this.animate().x(-getWidth()).setDuration(300).start();
-//                }
-            }
-            return true;
-
-
-        }
-
-
-        return super.onTouchEvent(event);
+//        }
+        return true;
     }
 
+
     float downX = -1;
+
     @Override
     public boolean onDown(MotionEvent e) {
 
@@ -447,7 +435,7 @@ public abstract class BaseCalendarView extends View implements GestureDetector.O
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 
-        System.out.println("MonthView onScroll:"+distanceX+"  y:"+distanceY);
+        System.out.println("MonthView onScroll:" + distanceX + "  y:" + distanceY);
 
         return true;
 
@@ -460,6 +448,6 @@ public abstract class BaseCalendarView extends View implements GestureDetector.O
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        return false;
+        return true;
     }
 }

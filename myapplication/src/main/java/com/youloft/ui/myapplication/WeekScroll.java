@@ -64,7 +64,7 @@ public class WeekScroll extends RecyclerView.OnScrollListener implements View.On
         if (newState == RecyclerView.SCROLL_STATE_IDLE && !needReused) {
             int offset = recyclerView.computeVerticalScrollOffset();
             final int fHeight = recyclerView.getChildAt(0).getHeight() - mWeekView.getHeight();
-            if (state == STATE_WEEK && mListView.getFirstVisiblePosition() == 0 && offset >= fHeight) {
+            if (state == STATE_WEEK && (mListView.getFirstVisiblePosition() == 0 && offset >= fHeight || mListView.getFirstVisiblePosition() > 0)) {
                 state = STATE_LIST;
                 mListView.setFlingEnable(true);
             }

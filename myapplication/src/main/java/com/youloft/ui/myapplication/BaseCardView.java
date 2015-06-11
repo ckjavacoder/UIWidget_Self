@@ -14,7 +14,6 @@ public abstract class BaseCardView extends RecyclerView.ViewHolder {
 
     RecyclerView mOwnerRecyclerView;
 
-
     public BaseCardView(View itemView) {
         super(itemView);
     }

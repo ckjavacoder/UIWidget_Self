@@ -1,6 +1,5 @@
 package com.youloft.ui.myapplication;
 
-import android.view.View;
 import android.view.ViewGroup;
 
 /**
@@ -9,8 +8,6 @@ import android.view.ViewGroup;
  */
 public class MonthCardView extends BaseCardView {
 
-
-    public static int HEIGHT = 0;
 
     public MonthCardView(ViewGroup parent) {
         super(parent, R.layout.card_month);
