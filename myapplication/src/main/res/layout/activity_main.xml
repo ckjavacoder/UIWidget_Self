@@ -50,11 +50,10 @@
 
             <include layout="@layout/weekview" />
 
-            <com.youloft.widget.WeekView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <com.youloft.ui.myapplication.WeekFlowView
                 style="@style/MonthStyle"
-                />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 

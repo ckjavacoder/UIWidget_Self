@@ -68,7 +68,7 @@ public class WeekScroll extends RecyclerView.OnScrollListener implements View.On
                 state = STATE_LIST;
                 mListView.setFlingEnable(true);
             }
-
+            canScrollToAd = mListView.computeVerticalScrollOffset() == 0;
 
             boolean isUp = offset > preScrollY;
             if (mListView.getFirstVisiblePosition() == 0) {
@@ -164,7 +164,6 @@ public class WeekScroll extends RecyclerView.OnScrollListener implements View.On
         if (state == STATE_WEEK && (pos > 0 || (pos == 0 && bottom <= mWeekView.getHeight()))) {
             needReused = true;
             mListView.scrollBy(0, -dy);
-
             return;
         }
 
@@ -195,6 +194,7 @@ public class WeekScroll extends RecyclerView.OnScrollListener implements View.On
      * 返回主View
      */
     private void returnMainView() {
+        mAdView.setEnabled(false);
         smoothScroll(0);
     }
 
@@ -257,12 +257,20 @@ public class WeekScroll extends RecyclerView.OnScrollListener implements View.On
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                if (mListFrame.getScrollY() != 0) {
-                    smoothScroll(-mListFrame.getHeight());
+                if (mListFrame.getScrollY() > 0) {
+                    showAdView();
                 }
                 break;
         }
         return false;
+    }
+
+    /**
+     * 显示广告View
+     */
+    private void showAdView() {
+        smoothScroll(-mListFrame.getHeight());
+        mAdView.setEnabled(true);
     }
 
 
@@ -271,6 +279,7 @@ public class WeekScroll extends RecyclerView.OnScrollListener implements View.On
         WeekScroll mScrollHelper;
 
         GestureDetector mGestureDetector;
+
 
         public AdTouchListener(Context context, WeekScroll scrollHelper) {
             this.mScrollHelper = scrollHelper;
@@ -284,7 +293,6 @@ public class WeekScroll extends RecyclerView.OnScrollListener implements View.On
                 public boolean onSingleTapUp(MotionEvent e) {
                     mScrollHelper.returnMainView();
                     return true;
-
                 }
 
                 @Override

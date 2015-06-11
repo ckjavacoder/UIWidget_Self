@@ -6,9 +6,9 @@
 
     <include layout="@layout/weekview" />
 
-    <com.youloft.widget.MonthView
+    <com.youloft.ui.myapplication.MonthFlowView
+        style="@style/MonthStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/MonthStyle"/>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
