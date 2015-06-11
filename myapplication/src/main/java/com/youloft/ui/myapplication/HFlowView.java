@@ -117,17 +117,11 @@ public class HFlowView<T extends View> extends FrameLayout implements GestureDet
     }
 
 
-    final int FLAG_PRE = -1;
-
-    final int FLAG_NEXT = 1;
-
-    int flag = 0;
-
-
     /**
      * 显示一下个View
      */
     public void showNextView() {
+        smoothScrollTo(getWidth());
     }
 
 
@@ -135,8 +129,29 @@ public class HFlowView<T extends View> extends FrameLayout implements GestureDet
      * 显示上一个View
      */
     public void showPreView() {
+        smoothScrollTo(-getWidth());
     }
 
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        final int count = getChildCount();
+        int width = right - left;
+        int height = bottom - top;
+        final int scrollX = getScrollX();
+        int childLeft = -getWidth() + scrollX;
+        int childTop = 0;
+        for (int i = 0; i < count; i++) {
+            final View child = getChildAt(i);
+            if (child.getVisibility() != View.GONE) {
+                child.layout(childLeft,
+                        childTop,
+                        childLeft + width,
+                        childTop + height);
+                childLeft += width;
+            }
+        }
+    }
 
     float dx, dy, lx, ly, fx, fy, ddx, ddy;
 
@@ -193,6 +208,11 @@ public class HFlowView<T extends View> extends FrameLayout implements GestureDet
          * 弹起
          */
         if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (getScrollY() % getWidth() < getWidth() / 3) {
+                showPreView();
+            } else {
+                showNextView();
+            }
 
         }
         return mGestureDetector.onTouchEvent(event);
