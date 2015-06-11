@@ -9,8 +9,8 @@ import android.view.View;
 
 /**
  * 用于协调周视图与月视图切换及广告视图切换
- *
- *
+ * <p/>
+ * <p/>
  * Created by javen on 15/6/10.
  */
 public class WeekScroll extends RecyclerView.OnScrollListener implements View.OnTouchListener {
@@ -48,14 +48,15 @@ public class WeekScroll extends RecyclerView.OnScrollListener implements View.On
     @Override
     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
 
-        if( newState == RecyclerView.SCROLL_STATE_DRAGGING){
+        if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
             preScrollY = recyclerView.computeVerticalScrollOffset();
-            if(targetScrollY!=preScrollY && targetScrollY!=-1){
+            if (targetScrollY != preScrollY && targetScrollY != -1) {
                 preScrollY = targetScrollY;
-            }else{
+            } else {
                 targetScrollY = -1;
             }
         }
+
 
         /**
          * 闲置的时候
@@ -63,32 +64,36 @@ public class WeekScroll extends RecyclerView.OnScrollListener implements View.On
         if (newState == RecyclerView.SCROLL_STATE_IDLE && !needReused) {
             int offset = recyclerView.computeVerticalScrollOffset();
             final int fHeight = recyclerView.getChildAt(0).getHeight() - mWeekView.getHeight();
-            if(state == STATE_WEEK&& mListView.getFirstVisiblePosition() == 0 && offset>=fHeight){
+            if (state == STATE_WEEK && mListView.getFirstVisiblePosition() == 0 && offset >= fHeight) {
                 state = STATE_LIST;
                 mListView.setFlingEnable(true);
             }
 
-            boolean isUp = offset>preScrollY;
+
+            boolean isUp = offset > preScrollY;
             if (mListView.getFirstVisiblePosition() == 0) {
                 if (offset > fHeight / 3 && isUp) {
                     mListView.smoothScrollBy(0, fHeight - offset);
                     targetScrollY = fHeight;
                     state = STATE_LIST;
                     mListView.setFlingEnable(true);
-                } else if(offset<fHeight/3*2 && !isUp){
-                    mListView.smoothScrollBy(0,-offset);
+                } else if (offset < fHeight / 3 * 2 && !isUp) {
+                    mListView.smoothScrollBy(0, -offset);
                     targetScrollY = 0;
                     state = STATE_INVALID;
                     mListView.setFlingEnable(false);
-                }else {
-                    if(preScrollY == fHeight){
+                } else {
+                    if (preScrollY == fHeight) {
                         state = STATE_LIST;
                         mListView.setFlingEnable(true);
-                    }else{
+                    } else {
                         state = STATE_INVALID;
                         mListView.setFlingEnable(false);
                     }
-                    mListView.smoothScrollBy(0, preScrollY-offset);
+
+                    preScrollY = Math.max(0, Math.min(preScrollY, fHeight));
+
+                    mListView.smoothScrollBy(0, preScrollY - offset);
                 }
             }
         }
@@ -127,7 +132,7 @@ public class WeekScroll extends RecyclerView.OnScrollListener implements View.On
     private void setAdScroll(final int scrollY) {
         mListFrame.scrollTo(0, scrollY);
         float p = scrollY / (float) mListFrame.getHeight();
-        mAdMaskView.setAlpha(1+p);
+        mAdMaskView.setAlpha(1 + p);
     }
 
 
@@ -140,20 +145,6 @@ public class WeekScroll extends RecyclerView.OnScrollListener implements View.On
             needReused = false;
             return;
         }
-
-
-//        if(recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_DRAGGING
-//                && dy<0
-//                &&recyclerView.computeVerticalScrollOffset()<mWeekView.getHeight()
-//                &&state == STATE_LIST){
-//            recyclerView.stopScroll();
-//            needReused = true;
-//            recyclerView.scrollBy(0,mWeekView.getHeight()-recyclerView.computeVerticalScrollOffset());
-//            state = STATE_WEEK;
-//            return;
-//        }
-
-
 
         if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
             return;
@@ -170,10 +161,10 @@ public class WeekScroll extends RecyclerView.OnScrollListener implements View.On
         int height = mListView.getChildAt(0).getHeight() - mWeekView.getHeight();
 
 
-
         if (state == STATE_WEEK && (pos > 0 || (pos == 0 && bottom <= mWeekView.getHeight()))) {
             needReused = true;
             mListView.scrollBy(0, -dy);
+
             return;
         }
 
@@ -211,7 +202,7 @@ public class WeekScroll extends RecyclerView.OnScrollListener implements View.On
 
     boolean canScrollToAd = false;
 
-    int downOffset = -1,downPos = -1;
+    int downOffset = -1, downPos = -1;
 
 
     @Override
@@ -233,7 +224,7 @@ public class WeekScroll extends RecyclerView.OnScrollListener implements View.On
                 if (state == STATE_INVALID && mWeekView.getScrollY() > 0) {
                     state = STATE_WEEK;
                     mListView.setFlingEnable(false);
-                }else{
+                } else {
                     mListView.setFlingEnable(true);
                 }
                 canScrollToAd = mListView.computeVerticalScrollOffset() == 0;

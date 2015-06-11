@@ -37,20 +37,20 @@ public class CardAdapter extends RecyclerView.Adapter<BaseCardView> {
 //            holder.itemView.getLayoutParams().height = 0;
 //            holder.itemView.setVisibility(View.GONE);
 //        } else {
-            holder.itemView.getLayoutParams().height = ActionBar.LayoutParams.WRAP_CONTENT;
+//            holder.itemView.getLayoutParams().height = ActionBar.LayoutParams.WRAP_CONTENT;
 //        }
+
+        holder.bindUI();
     }
 
     @Override
     public int getItemCount() {
-        return 100;
+        return 30;
     }
 
     @Override
     public int getItemViewType(int position) {
         if (position == 0) {
-
-
             return 0;
         }
 

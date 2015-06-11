@@ -10,6 +10,10 @@ import android.view.ViewGroup;
  */
 public abstract class BaseCardView extends RecyclerView.ViewHolder {
 
+    ViewGroup mParent = null;
+
+    RecyclerView mOwnerRecyclerView;
+
 
     public BaseCardView(View itemView) {
         super(itemView);
@@ -17,7 +21,12 @@ public abstract class BaseCardView extends RecyclerView.ViewHolder {
 
     public BaseCardView(ViewGroup parent, int layoutRes) {
         this(LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false));
+        mOwnerRecyclerView = (RecyclerView) parent;
     }
 
+    public void bindUI() {
+
+
+    }
 
 }
